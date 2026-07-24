@@ -142,6 +142,9 @@ src/shared/         Shared types and defaults
 
 Bug reports, focused pull requests, and compatibility notes for OpenAI-compatible providers are welcome. Please run the type checks and relevant tests before submitting a change.
 
+## Support Link
+https://ko-fi.com/segarega
+
 ## License
 
 Roleplay Lab is available under the [AGPL-3.0 license](LICENSE).
