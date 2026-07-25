@@ -53,11 +53,13 @@ They are replaced with the configured player and NPC names before requests are s
 
 ## Getting started
 
-### Portable Windows build
+### Download from Releases
 
-Download the latest portable executable from the repository's Releases page, then run it without installation.
+Download the latest portable executable for Windows from the repository's Releases page, then run it without installation.
 
 The executable may trigger a Windows SmartScreen warning when it is distributed without a code-signing certificate.
+
+Download AppImage from Releases page, then run it without building.
 
 ### Run from source
 
