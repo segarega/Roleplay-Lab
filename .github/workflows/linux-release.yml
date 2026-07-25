@@ -1,0 +1,121 @@
+name: Build and publish Linux AppImage
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "v1.3.0"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+
+jobs:
+  appimage:
+    name: Linux x64 AppImage
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.12.0
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Verify release version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PACKAGE_VERSION=$(node -e \
+            "process.stdout.write(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version)")
+
+          if [[ "$RELEASE_TAG" != "v$PACKAGE_VERSION" ]]; then
+            echo "Tag $RELEASE_TAG does not match package version $PACKAGE_VERSION."
+            exit 1
+          fi
+
+          test -f LICENSE
+          test -f NOTICE
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test and compile
+        run: |
+          pnpm test:roleplay
+          pnpm build
+
+      - name: Include legal notices
+        run: cp LICENSE NOTICE out/
+
+      - name: Build AppImage
+        run: |
+          pnpm exec electron-builder \
+            --linux AppImage \
+            --x64 \
+            --publish never \
+            --config.toolsets.appimage=1.0.3 \
+            --config.linux.icon=resources/icon.png \
+            --config.linux.category=Utility \
+            '--config.linux.artifactName=Roleplay-Lab-${version}-Linux-x64.${ext}'
+
+      - name: Verify AppImage structure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          APPIMAGE=$(find release -maxdepth 1 -type f -name "*.AppImage" -print -quit)
+          test -n "$APPIMAGE"
+
+          chmod +x "$APPIMAGE"
+          "$APPIMAGE" --appimage-extract >/dev/null
+          test -x squashfs-root/AppRun
+
+      - name: Generate checksum
+        run: |
+          cd release
+          sha256sum *.AppImage > SHA256SUMS-linux.txt
+
+      - name: Create release or upload to existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" \
+              release/*.AppImage \
+              release/SHA256SUMS-linux.txt
+          else
+            gh release create "$RELEASE_TAG" \
+              release/*.AppImage \
+              release/SHA256SUMS-linux.txt \
+              LICENSE \
+              NOTICE \
+              --verify-tag \
+              --generate-notes \
+              --title "Roleplay Lab $RELEASE_TAG"
+          fi
