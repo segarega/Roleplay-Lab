@@ -145,6 +145,10 @@ Bug reports, focused pull requests, and compatibility notes for OpenAI-compatibl
 ## Support Link
 https://ko-fi.com/segarega
 
-## License
+## License and attribution
 
-Roleplay Lab is available under the [AGPL-3.0 license](LICENSE).
+Copyright (C) 2026 segarega.
+
+Roleplay Lab is licensed under the [GNU Affero General Public License v3.0 only](LICENSE).
+
+Copyright and attribution information is provided in [NOTICE](NOTICE). Redistributions must retain applicable copyright and license notices as required by the AGPL.
