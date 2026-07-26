@@ -4,7 +4,7 @@
   <img src="resources/Roleplay-Lab-Interface.png" alt="Roleplay Lab interface" width="100%">
 </p>
 
-Roleplay Lab is a Windows desktop workbench for testing OpenAI-compatible language models side by side. It is designed for roleplay, NPC dialogue, character consistency, and prompt iteration rather than general-purpose multi-model chat.
+Roleplay Lab is a desktop workbench for testing OpenAI-compatible language models side by side. It is designed for roleplay, NPC dialogue, character consistency, and prompt iteration rather than general-purpose multi-model chat.
 
 Each Model Lane can use a different endpoint, API key, model, generation configuration, roleplay context, and memory policy. Shared messages make it easy to compare responses under the same conditions.
 
