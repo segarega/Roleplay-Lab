@@ -4,7 +4,7 @@
   "description": "A side-by-side OpenAI-compatible model workbench for roleplay testing.",
   "main": "./out/main/index.js",
   "author": "Roleplay Lab",
-  "license": "MIT",
+  "license": "AGPLv3-only",
   "type": "module",
   "scripts": {
     "dev": "electron-vite dev",
